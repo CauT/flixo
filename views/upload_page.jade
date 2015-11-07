@@ -1,12 +1,16 @@
 extends layout
 
+block links
+    link(rel='stylesheet', href='/stylesheets/upload.css')
+    
 block content
-    form(method="post" action="/upload/page"
-    autocomplete="off")    
-        p 请输入博文标题
-        input(type="text" name="title" class="page_input")
-        p 请输入博文内容
-        input(type="text" name="page" class="page_input")
-        p 请输入标签，以@开头，如"@Node.js"
-        input(type="text" name="tag" class="page_input")
-        input(type="submit")
+    body
+        form(method="post" action="/upload/page"
+        autocomplete="off")    
+            p 请输入博文标题
+            input(type="text" name="title" class="page_input")
+            p 请输入博文内容
+            textarea(name="page" class="page_input")
+            p 请输入标签，以@开头，如"@Node.js"
+            input(type="text" name="tag" class="page_input")
+            input(type="submit")
