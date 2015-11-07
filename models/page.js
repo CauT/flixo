@@ -1,18 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var tagSchema = new Schema({
-    name: String,
-    created_at: Date,
-    updated_at: Date
-});
-
-var commentSchema = new Schema({
-    author: String,
-    content: String,
-    created_at: Date
-    // comment can not be edited
-});
+var commentSchema = require('./comment').schema;
+var tagSchema = require('./tag').schema;
 
 var pageSchema = new Schema({
     name: String,
@@ -24,6 +14,7 @@ var pageSchema = new Schema({
     updated_at: Date
 });
 
-var Page = mongoose.model('Page', pageSchema);
-
-module.exports = Page;
+module.exports = {
+    Page: mongoose.model('Page', pageSchema),
+    schema: pageSchema
+};

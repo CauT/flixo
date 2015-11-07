@@ -8,6 +8,7 @@ var commentSchema = new Schema({
     // comment can not be edited
 });
 
-var Comment = mongoose.model('Comment', commentSchema);
-
-module.exports = Comment;
+module.exports = {
+    Comment: mongoose.model('Comment', commentSchema),
+    schema: commentSchema
+};

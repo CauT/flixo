@@ -7,6 +7,7 @@ var tagSchema = new Schema({
     updated_at: Date
 });
 
-var Tag = mongoose.model('Tag', tagSchema);
-
-module.exports = Tag;
+module.exports = {
+    Tag: mongoose.model('Tag', tagSchema),
+    schema: tagSchema
+};
