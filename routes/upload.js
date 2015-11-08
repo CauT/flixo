@@ -36,16 +36,16 @@ router.post('/page', function(req, res, next) {
     // check uniqueness of tags, if true, put it into database
     var tagArr = req.body.tag.split('@');
     var hash = {};
-    for (var i in tagArr) {
-        if (!hash[tagArr[i]]) {
-            hash[tagArr[i]] = true;
+    tagArr.forEach(function(tag) {
+        if (!hash[tag]) {
+            hash[tag] = true;
             newPage.tags.push({
-                name: tagArr[i],
+                name: tag,
                 created_at: date,
                 updated_at: date
             });
         }
-    }
+    });
 
     marked(req.body.page, function(err, content) {
         if (err) throw err;
