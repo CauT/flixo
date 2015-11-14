@@ -17,7 +17,7 @@ marked.setOptions({
   smartypants: false
 });
 
-mongoose.connect('mongodb://localhost:27017/test');
+// mongoose.connect('mongodb://localhost:27017/test');
 
 router.get('/page', function(req, res, next) {
     res.render('upload_page', {css_path: '/stylesheets/upload.css'});
@@ -47,6 +47,7 @@ router.post('/page', function(req, res, next) {
         }
     });
 
+    // convert markdown content to html
     marked(req.body.page, function(err, content) {
         if (err) throw err;
         newPage.content = content;

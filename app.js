@@ -1,6 +1,6 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
+// var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -12,8 +12,10 @@ var users = require('./routes/users');
 var app = express();
 
 var mongoose = require('mongoose');
-var Page = require('./models/page');
-// mongoose.connect('mongodb://localhost:27017/test');
+var pageSchema = require('./models/page').pageSchema;
+
+// mongoose.createConnection('mongodb://localhost:27017/test');
+mongoose.connect('mongodb://localhost:27017/test');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,43 +29,44 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/', function(req, res, next) {
+    // console.log('url = ' + req.url);
+    // console.log('originalUrl = ' + req.originalUrl);
+    // console.log('baseUrl = ' + req.baseUrl);
+    var Page = mongoose.model('Page', pageSchema);
+
+    if (req.url === '/')
+        Page.find({}).sort('-date').exec(function(err, pages) {
+            var titles = new Array();
+            var pageUrls = new Array();
+            if (err) return err;
+            pages.forEach(function(page) {
+                titles.push(page.title);
+                pageUrls.push('/page/' + page._id);
+            });
+            res.render('index', {pageUrls: pageUrls});
+        });
+    else
+        next();
+});
+
+// app.use('/', index);
+
 // app.use('/page/:', routes);
 // app.use('/users', users);
 
-// app.use('/page/1', function(req, res, next) {
-//     console.log('come in');
-//     res.send('come in');
-//     next();
-// });
+app.get('/page/:pageId', function(req, res, next) {
+    var Page = mongoose.model('Page', pageSchema);
 
-// var newPage = Page({
-//     name: 'a',
-//     author: 'a',
-//     content: 'a',
-//     comments: [
-//     {
-//         author: 'b',
-//         content: 'b',
-//         created_at: new Date(),
-//     }],
-//     tags: [{
-//         name: 'c',
-//         created_at: new Date(),
-//         updated_at: new Date()
-//     }],
-//     created_at: new Date(),
-//     updated_at: new Date()
-// });
-//
-// app.get('/page/:pageId', function(req, res, next) {
-//         newPage.save(function(err) {
-//         if (err) throw err;
-//
-//         console.log('Page created!');
-//         next();
-//     });
-// });
-//
+    Page.findOne({ '_id': req.params.pageId }, 'title content', function (err, page) {
+        if (err) return err;
+        res.render('page', {
+            css_path: '/stylesheets/greyshade.css',
+            marked_page: page.content
+        });
+    });
+});
+
 // app.get('/page/:pageId', function(req, res, next) {
 //     // Page.find({ _id: req.params.pageId }, function(err, page) {
 //     Page.find({ name: req.params.pageId }, function(err, page) {
@@ -76,12 +79,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 //     });
 //     console.log('find complete');
 // });
-//
+
 app.use('/upload', upload);
 
-// app.param('/page/:pageId', function(req, res, next) {
-//     console.log('add param');
-// });
+app.param('/page/:pageId', function(req, res, next) {
+    console.log('add param');
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

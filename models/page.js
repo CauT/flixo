@@ -5,7 +5,7 @@ var commentSchema = require('./comment').schema;
 var tagSchema = require('./tag').schema;
 
 var pageSchema = new Schema({
-    name: String,
+    title: String,
     author: String,
     content: String,
     comments: [commentSchema],
