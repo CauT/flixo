@@ -55,11 +55,11 @@ router.post('/page', function(req, res, next) {
             if (err) throw err;
 
             // console.log(room);
-            // res.redirect('your/404/path.html');
-            res.render('page', {
-                css_path: '/stylesheets/greyshade.css',
-                marked_page: room.content
-            });
+            res.redirect('/page/' + room._id);
+            // res.render('page', {
+            //     css_path: '/stylesheets/greyshade.css',
+            //     marked_page: room.content
+            // });
         });
     });
 });

@@ -1,10 +1,18 @@
 extends layout
 
 block links
-    link(rel='stylesheet', href='/stylesheets/GitHub2.css')
+    link(rel="stylesheet", href="/stylesheets/GitHub2.css")
     link(rel="stylesheet", href="/stylesheets/default.min.css")
+    link(rel="stylesheet", href="/stylesheets/style.css")
     script(src="/javascripts/highlight.min.js")
     script hljs.initHighlightingOnLoad()
         
 block content
-    body !{marked_page}
+    body
+        ul(class="tag")
+            each tagName in tagNames
+                li
+                    a(href="/tag/" + tagName) !{tagName}
+                
+        !{marked_page}
+    
