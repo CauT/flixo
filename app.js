@@ -12,7 +12,7 @@ var users = require('./routes/users');
 var app = express();
 
 var mongoose = require('mongoose');
-var pageSchema = require('./models/page').pageSchema;
+var pageModel = require('./models/page');
 
 // mongoose.createConnection('mongodb://localhost:27017/test');
 mongoose.connect('mongodb://localhost:27017/test');
@@ -30,13 +30,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', function(req, res, next) {
-    // console.log('url = ' + req.url);
-    // console.log('originalUrl = ' + req.originalUrl);
-    // console.log('baseUrl = ' + req.baseUrl);
-    var Page = mongoose.model('Page', pageSchema);
-
-    if (req.url === '/')
-        Page.find({}).sort('-date').exec(function(err, pages) {
+    if (req.url === '/') {
+        pageModel.Page.find({}).sort('-date').exec(function(err, pages) {
             var titles = new Array();
             var pageUrls = new Array();
             if (err) return err;
@@ -46,19 +41,13 @@ app.use('/', function(req, res, next) {
             });
             res.render('index', {pageUrls: pageUrls});
         });
+    }
     else
         next();
 });
 
-// app.use('/', index);
-
-// app.use('/page/:', routes);
-// app.use('/users', users);
-
 app.get('/page/:pageId', function(req, res, next) {
-    var Page = mongoose.model('Page', pageSchema);
-
-    Page.findOne({ '_id': req.params.pageId }, 'title content', function (err, page) {
+    pageModel.Page.findOne({ '_id': req.params.pageId }, 'title content', function (err, page) {
         if (err) return err;
         res.render('page', {
             css_path: '/stylesheets/greyshade.css',
@@ -66,19 +55,6 @@ app.get('/page/:pageId', function(req, res, next) {
         });
     });
 });
-
-// app.get('/page/:pageId', function(req, res, next) {
-//     // Page.find({ _id: req.params.pageId }, function(err, page) {
-//     Page.find({ name: req.params.pageId }, function(err, page) {
-//         if (err)
-//             throw err;
-//         else
-//             console.log(page);
-//         // res.json(page);
-//         res.send(page[0].content);
-//     });
-//     console.log('find complete');
-// });
 
 app.use('/upload', upload);
 
