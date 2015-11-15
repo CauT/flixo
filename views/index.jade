@@ -1,9 +1,10 @@
 extends layout
 
 block content
-    h1 编码沉思录
-    
-    ul
-        each pageUrl in pageUrls
-            li
-                a(href=pageUrl) page
+    body
+        h1 编码沉思录
+        
+        ul
+            each page in pages
+                li
+                    a(href='/page/' + page._id) !{page.title}

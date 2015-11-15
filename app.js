@@ -31,15 +31,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', function(req, res, next) {
     if (req.url === '/') {
-        pageModel.Page.find({}).sort('-date').exec(function(err, pages) {
-            var titles = new Array();
-            var pageUrls = new Array();
+        pageModel.Page.find({}, 'title _id').sort('-date').exec(function(err, pages) {
             if (err) return err;
-            pages.forEach(function(page) {
-                titles.push(page.title);
-                pageUrls.push('/page/' + page._id);
+            res.render('index', {
+                pages: pages
             });
-            res.render('index', {pageUrls: pageUrls});
         });
     }
     else
