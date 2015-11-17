@@ -25,7 +25,10 @@ router.get('/page', function(req, res, next) {
 
 router.post('/page', function(req, res, next) {
     var date = new Date();
+    var pageId = mongoose.Types.ObjectId();
+    var tagId = mongoose.Types.ObjectId();
     var newPage = Page({
+        _id: pageId;
         author: 'DesGemini',
         created_at: date,
         updated_at: date
@@ -42,20 +45,17 @@ router.post('/page', function(req, res, next) {
             if (!hash[tag]) {
                 hash[tag] = true;
                 Tag.findOne({'name': tag}, '_id', function(err, found) {
-                    var tmp;
                     if(found == undefined) {
                         var newTag = Tag({
+                            _id: tagId,
                             name: tag,
                             created_at: date,
                             updated_at: date
                         });
-                        newTag.save(function(err, saved) {
-                            tmp = saved._id;
-                        });
+                        newTag.save();
                     } else {
-                        tmp = found._id;
+                        found.tags.push(pageId);
                     }
-                    newPage.tags.push(tmp);
                 });
             }
         });
@@ -69,11 +69,10 @@ router.post('/page', function(req, res, next) {
         });
     }
 
-    Q.all([saveTag(), saveContent()]).done( function() {
-        newPage.save(function(err, room) {
+    Q.all([saveTag(), saveContent()]).done(function() {
+        newPage.save(function(err, saved) {
             if (err) throw err;
-
-            res.redirect('/page/' + room._id);
+            res.redirect('/page/' + saved._id);
         });
     });
 });
