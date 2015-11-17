@@ -9,7 +9,7 @@ var pageSchema = new Schema({
     author: String,
     content: String,
     comments: [commentSchema],
-    tags: [tagSchema],
+    tags: [String],
     created_at: Date,
     updated_at: Date
 });

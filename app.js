@@ -13,6 +13,7 @@ var app = express();
 
 var mongoose = require('mongoose');
 var pageModel = require('./models/page');
+var tagModel = require('./models/tag');
 
 // mongoose.createConnection('mongodb://localhost:27017/test');
 mongoose.connect('mongodb://localhost:27017/test');
@@ -42,15 +43,33 @@ app.use('/', function(req, res, next) {
         next();
 });
 
+app.get('/tag/:tagName', function(req, res, next) {
+    // pageModel.Page.find({
+    //     'tags': [{'name': req.params.tagName}]
+    // },
+    //     'title _id'
+    // ).sort('-date').exec(function(err, pages){
+    //     if (err) return err;
+    //     console.log(pages);
+    // });
+    // pageModel.Page.find('tags': {'$in' : [{name: req.params.tagName}]}, 'title _id')
+    // tagModel.Tag.find({
+    //     'name': req.params.tagName}
+    // },
+    //     'title _id'
+    // .sort('-date').exec(function(err, pages){
+        // if (err) return err;
+        // console.log(pages);
+    // });
+});
+
 app.get('/page/:pageId', function(req, res, next) {
     pageModel.Page.findOne({ '_id': req.params.pageId }, 'title content tags', function (err, page) {
         if (err) return err;
         var tagNames = new Array();
-        console.log(page);
         page.tags.forEach(function(tag) {
             tagNames.push(tag.name);
         });
-        console.log(tagNames);
         res.render('page', {
             tagNames: tagNames,
             css_path: '/stylesheets/greyshade.css',
