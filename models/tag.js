@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var ObjectId = Schema.ObjectId;
 
 var tagSchema = new Schema({
     name: String,
-    pages: [String],
+    pages: [ObjectId],
     created_at: Date,
     updated_at: Date
 });

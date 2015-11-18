@@ -28,7 +28,7 @@ router.post('/page', function(req, res, next) {
     var pageId = mongoose.Types.ObjectId();
     var tagId = mongoose.Types.ObjectId();
     var newPage = Page({
-        _id: pageId;
+        _id: pageId,
         author: 'DesGemini',
         created_at: date,
         updated_at: date
@@ -44,17 +44,19 @@ router.post('/page', function(req, res, next) {
         tagArr.forEach(function(tag) {
             if (!hash[tag]) {
                 hash[tag] = true;
+                newPage.tags.push(tagId);
                 Tag.findOne({'name': tag}, '_id', function(err, found) {
                     if(found == undefined) {
                         var newTag = Tag({
                             _id: tagId,
                             name: tag,
                             created_at: date,
-                            updated_at: date
+                            updated_at: date,
+                            pages: [pageId]
                         });
                         newTag.save();
                     } else {
-                        found.tags.push(pageId);
+                        found.pages.push(pageId);
                     }
                 });
             }
