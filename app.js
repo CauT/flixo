@@ -5,6 +5,12 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var Q = require('q');
+var Promise = require('bluebird')
+// promisify the entire mongoose Model
+// var Page = require('./models/page').Page;
+// var Tag = require('./models/tag').Tag;
+var Page = Promise.promisifyAll(require('./models/page').Page);
+var Tag = Promise.promisifyAll(require('./models/tag').Tag);
 
 var routes = require('./routes/index');
 var upload = require('./routes/upload');
@@ -13,8 +19,8 @@ var users = require('./routes/users');
 var app = express();
 
 var mongoose = require('mongoose');
-var Page = require('./models/page').Page;
-var Tag = require('./models/tag').Tag;
+var ObjectId = require('mongoose').Types.ObjectId;
+
 
 // mongoose.createConnection('mongodb://localhost:27017/test');
 mongoose.connect('mongodb://localhost:27017/test');
@@ -49,66 +55,79 @@ app.get('/tag/:tagName', function(req, res, next) {
     var promises = [];
     var tmp;
 
-    var findTagPromise = Tag.findOne({name: req.params.tagName}, 'pages').exec();
+    console.log('begin');
+    var findTagPromise = Tag.findOne({name: req.params.tagName}, 'pages').exec(
+        function(err, pages) {
+            console.log(pages);
+            tmp = pages;
+        }
+    );
 
-    findTagPromise.addBack(function(err, found) {
-        tmp = found;
-        console.log(found);
-        // console.log('1 ' + found);
-        // for (var i in found.pages) {
-        //     promises.push(Page.find({_id: found.pages[i]}, 'title', function(err, page) {
-        //         if (err) return err;
-        //         console.log(page);
-        //         pageInfos.push({
-        //             _id: found.pages[i],
-        //             title: page.title
-        //         });
-        //     }));
-        // }
-    });
-
-    findTagPromise.then(function() {
-        // if (found.length == 1) {
-        console.log(tmp);
-        var pse = Page.find({_id: tmp.pages[0]}, 'title').exec();
-        pse.addBack(function(err, page) {
-            if (err) return err;
-            console.log(page);
-            pageInfos.push({
-                _id: tmp.pages[0],
-                title: page[0].title
-            })
-        });
-        return pse;
-    }).then(function() {
-        console.log(pageInfos);
-        res.render('index', {
-            pages: pageInfos
-        });
-    });
-    // var tmpPromise = findTagPromise;
-
-    // console.log(promises);
-    // promises.forEach(function(promise) {
-        // tmpPromise = tmpPromise.then(promise);
+    // var getTagIdList = Promise.promisify(function (err, page) {
+    //     console.log('getTagIdList');
+    //     tmp.pages.forEach(function(pageId) {
+    //         promises.push(Page.findOne({_id: new ObjectId(pageId)}, 'title').exec(function(err, page) {
+    //             if (err) return err;
+    //             console.log('all');
+    //             console.log(page);
+    //             pageInfos.push({
+    //                 _id: pageId,
+    //                 title: page.title
+    //             });
+    //             console.log(pageInfos);
+    //         }));
+    //     });
     // });
 
-    // var a = Tag.findOne({name: req.params.tagName}, 'pages').exec();
-    //
-    //
-    // console.log(a);
-    //
-    // a.addBack(function(err, found) {
-    //     console.log('2 ' + found);
-    // });
-    //
-    // findTagPromise.then(a);
-    //
-    // tmpPromise.then(function() {
-    //     console.log(pageInfos);
+    function getTagIdList(err, page) {
+        console.log('getTagIdList');
+        return new Promise(function(resolve, reject) {
+            tmp.pages.forEach(function(pageId) {
+                promises.push(Page.findOne({_id: new ObjectId(pageId)}, 'title').exec(function(err, page) {
+                    if (err) return err;
+                    console.log('all');
+                    console.log(page);
+                    pageInfos.push({
+                        _id: pageId,
+                        title: page.title
+                    });
+                    res.render('index', {
+                        pages: pageInfos
+                    });
+                }));
+            });
+            resolve();
+        });
+    }
+
+    // var renderRes = Promise.promisify(function () {
+    //     console.log('renderRes');
     //     res.render('index', {
     //         pages: pageInfos
     //     });
+    // });
+
+    function renderRes(resolve, reject) {
+        console.log('renderRes');
+        return new Promise(function() {
+            res.render('index', {
+                pages: pageInfos
+            });
+            resolve();
+        });
+    }
+    // var x =
+    findTagPromise.then(getTagIdList, console.log).all(promises);
+    // .then(renderRes, console.log);
+
+    console.log('failed');
+    // x.fulfilled();
+    // .then(function() {
+    //     // console.log('done');
+    //     console.log('renderRes');
+    //     res.render('index', {
+    //         pages: pageInfos
+    //     })
     // });
 });
 
