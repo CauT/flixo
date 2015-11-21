@@ -51,84 +51,35 @@ app.use('/', function(req, res, next) {
 });
 
 app.get('/tag/:tagName', function(req, res, next) {
-    var pageInfos = [];
-    var promises = [];
-    var tmp;
+    var pageInfos = [], promises = [];
 
-    console.log('begin');
     var findTagPromise = Tag.findOne({name: req.params.tagName}, 'pages').exec(
-        function(err, pages) {
-            console.log(pages);
-            tmp = pages;
+        function(err, result) {
+            if (err) return err;
+            return result;
         }
     );
 
-    // var getTagIdList = Promise.promisify(function (err, page) {
-    //     console.log('getTagIdList');
-    //     tmp.pages.forEach(function(pageId) {
-    //         promises.push(Page.findOne({_id: new ObjectId(pageId)}, 'title').exec(function(err, page) {
-    //             if (err) return err;
-    //             console.log('all');
-    //             console.log(page);
-    //             pageInfos.push({
-    //                 _id: pageId,
-    //                 title: page.title
-    //             });
-    //             console.log(pageInfos);
-    //         }));
-    //     });
-    // });
+    function getTagIdList(result) {
+        result.pages.forEach(function(pageId) {
+            promises.push(Page.findOne({_id: new ObjectId(pageId)}, 'title').exec(function(err, page) {
+                if (err) return err;
+                pageInfos.push({
+                    _id: pageId,
+                    title: page.title
+                });
+            }));
+        });
+        return promises;
+    }
 
-    function getTagIdList(err, page) {
-        console.log('getTagIdList');
-        return new Promise(function(resolve, reject) {
-            tmp.pages.forEach(function(pageId) {
-                promises.push(Page.findOne({_id: new ObjectId(pageId)}, 'title').exec(function(err, page) {
-                    if (err) return err;
-                    console.log('all');
-                    console.log(page);
-                    pageInfos.push({
-                        _id: pageId,
-                        title: page.title
-                    });
-                    res.render('index', {
-                        pages: pageInfos
-                    });
-                }));
-            });
-            resolve();
+    function renderRes() {
+        res.render('index', {
+            pages: pageInfos
         });
     }
 
-    // var renderRes = Promise.promisify(function () {
-    //     console.log('renderRes');
-    //     res.render('index', {
-    //         pages: pageInfos
-    //     });
-    // });
-
-    function renderRes(resolve, reject) {
-        console.log('renderRes');
-        return new Promise(function() {
-            res.render('index', {
-                pages: pageInfos
-            });
-            resolve();
-        });
-    }
-    // var x =
-    findTagPromise.then(getTagIdList, console.log).all(promises);
-    // .then(renderRes, console.log);
-
-    console.log('failed');
-    // x.fulfilled();
-    // .then(function() {
-    //     // console.log('done');
-    //     console.log('renderRes');
-    //     res.render('index', {
-    //         pages: pageInfos
-    //     })
-    // });
+    findTagPromise.then(getTagIdList, console.log).all(promises).then(renderRes, console.log);
 });
 
 app.get('/page/:pageId', function(req, res, next) {
