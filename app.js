@@ -85,14 +85,14 @@ app.get('/tag/:tagName', function(req, res, next) {
 app.get('/page/:pageId', function(req, res, next) {
     Page.findOne({ _id: req.params.pageId }, 'title content tags', function(err, page) {
         if (err) return err;
-        // var tagNames = new Array();
-        // page.tags.forEach(function(tag) {
-        //     tagNames.push(tag.name);
-        // });
+        var tagNames = new Array();
+        page.tags.forEach(function(tag) {
+            tagNames.push(tag.name);
+        });
         res.render('page', {
-            // tagNames: tagNames,
+            tagNames: tagNames,
             css_path: '/stylesheets/greyshade.css',
-            // marked_page: page.content
+            marked_page: page.content
         });
     });
 });
