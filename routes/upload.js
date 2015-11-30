@@ -37,7 +37,14 @@ router.post('/page', function(req, res, next) {
 
     // check uniqueness of tags, if true, put it into database
     // Be careful that if convert markdown is quicker than save tag, tags will be null
-    var tagArr = req.body.tag.split('@');
+    const tempArr = req.body.tag.split('@');
+    var tagArr = [];
+    tempArr.forEach(function(tagName) {
+        if (!(tagName.trim() === "")) {
+            tagArr.push(tagName);
+        }
+    }, this);
+
     var hash = {};
 
     function saveTag() {
@@ -56,7 +63,13 @@ router.post('/page', function(req, res, next) {
                         });
                         newTag.save();
                     } else {
-                        found.pages.push(pageId);
+                        Tag.update({'_id': found._id}, {$push: {'pages': pageId}}, function(err){
+                            if (err) {
+                                console.log('Update error');
+                            } else {
+                                console.log('Update success');
+                            }
+                        });
                     }
                 });
             }
