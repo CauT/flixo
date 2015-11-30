@@ -1,9 +1,33 @@
 extends layout
-        
+  
+block links
+    link(rel="stylesheet", href="/stylesheets/material.min.css")
+    link(rel="stylesheet", href="/stylesheets/style.css")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/icon?family=Material+Icons")
+    script(src="/javascripts/material.min.js")
+     
 block content
-    body
-        h1 编码沉思录
-        ul
-            each page in pages
-                li
-                    a(href='/page/' + page._id) !{page.title}
+    body(class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base")
+        div(class="mdl-layout mdl-js-layout mdl-layout--fixed-header")
+            header(class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary")
+                div(class="mdl-layout--large-screen-only mdl-layout__header-row")
+                div(class="mdl-layout--large-screen-only mdl-layout__header-row")
+                    h3 编码沉思录
+                div(class="mdl-layout--large-screen-only mdl-layout__header-row")
+                div(class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark")
+                    a(href="#" class="mdl-layout__tab is-active") Index
+                    a(href="#" class="mdl-layout__tab") Tag
+                    a(href="#" class="mdl-layout__tab") About
+                    button(class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--accent" id="add")
+                        i(class="material-icons" role="presentation") add
+                        span(class="visuallyhidden") Add
+            main(class="mdl-layout__content")
+                div(class="mdl-layout__tab-panel is-active" id="overview") 
+                    each page in pages
+                        section(class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp")
+                            div(class="mdl-card mdl-cell mdl-cell--12-col")
+                                div(class="mdl-card__supporting-text")
+                                    h4 !{page.title}
+                                    Dolore ex deserunt aute fugiat aute nulla ea sunt aliqua nisi cupidatat eu. Nostrud in laboris labore nisi amet do dolor eu fugiat consectetur elit cillum esse. Pariatur occaecat nisi laboris tempor laboris eiusmod qui id Lorem esse commodo in. Exercitation aute dolore deserunt culpa consequat elit labore incididunt elit anim.
+                                 div(class="mdl-card__actions")
+                                    a(href="#" class="mdl-button") Read More
