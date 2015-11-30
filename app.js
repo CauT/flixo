@@ -58,9 +58,11 @@ app.get('/tag/:tagName', function(req, res, next) {
             pagePromises.push(Page.findOne({_id: pageId}, 'title').exec())
         });
         return pagePromises;
-    }).then(function(pagePromises){
+    })
+    .then(function(pagePromises){
         return Promise.all(pagePromises);
-    }).then(function(values){
+    })
+    .then(function(values){
         var pageInfos = [];
         values.forEach(function(page){
             pageInfos.push({
@@ -69,7 +71,8 @@ app.get('/tag/:tagName', function(req, res, next) {
             });
         })
         return pageInfos;
-    }).then(function(pageInfos){
+    })
+    .then(function(pageInfos){
         res.render('index', {
             pages: pageInfos
         });
