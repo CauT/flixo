@@ -6,7 +6,6 @@ var marked = require('marked');
 var Promise = require('bluebird');
 
 var Page = require('../models/page').Page;
-// var Tag = require('../models/tag').Tag;
 var Tag = Promise.promisifyAll(require('../models/tag').Tag);
 
 marked.setOptions({
@@ -29,7 +28,6 @@ router.post('/page', function(req, res, next) {
     var pageId = mongoose.Types.ObjectId();
     var tagIds = [];
     var findTagPromises = [];
-    var resaveTagPromise;
     var newTag;
     var newPage = Page({
         _id: pageId,
@@ -42,40 +40,7 @@ router.post('/page', function(req, res, next) {
     // check uniqueness of tags, if true, put it into database
     // Be careful that if convert markdown is quicker than save tag, tags will be null
     var tagArr = req.body.tag.split('@');
-    // var hash = {};
 
-    console.log('createFindTagPromises');
-    // tagArr.forEach(function(tag) {
-    //     if (!hash[tag]) {
-    //         hash[tag] = true;
-    //         var existOrNotThenDeal = Tag.findOne({'name': tag}, 'pages').exec(function(err, found) {
-    //             if(found == undefined) {
-    //                 var tmpTagId = mongoose.Types.ObjectId();
-    //                 console.log(tmpTagId);
-    //                 tagIds.push(tmpTagId);
-    //                 newTag = Tag({
-    //                     _id: tmpTagId,
-    //                     name: tag,
-    //                     created_at: date,
-    //                     updated_at: date,
-    //                     pages: [pageId]
-    //                 });
-    //             } else {
-    //                 tagIds.push(found._id);
-    //             }
-    //         });
-    //         findTagPromises.push(existOrNotThenDeal.then(function() {
-    //             console.log('save new tag');
-    //             console.log(newTag);
-    //             newTag.save();
-    //         }, function(err) {
-    //             console.log(err);
-    //             Tag.update({name: tag}, {$push: {pages: pageId}});
-    //         }));
-    //     }
-    // });
-
-    // var createFindTagPromises = new Promise(function(resolve, reject) {
     var hash = {};
     var pse;
     tagArr.forEach(function(tag) {
@@ -94,44 +59,34 @@ router.post('/page', function(req, res, next) {
                             updated_at: date,
                             pages: [pageId]
                         });
-                        resolve([false, newTag]);
+                        resolve({
+                            existOrNot: false,
+                            value: newTag
+                        });
                     } else {
-                        resolve([true, found._id]);
+                        resolve({
+                            existOrNot: true,
+                            value: found._id
+                        });
                     }
                 });
             });
             pse = pse.then(function(params) {
-                if (params[0]) {
-                    console.log('exist');
-                    console.log(params[1]);
-                    tagIds.push(params[1]);
-                    Tag.update({_id: params[1]}, {$push: {pages: pageId}}, function (err, raw) {
+                if (params.existOrNot) {
+                    console.log('exist, the tag id: ', params.value);
+                    tagIds.push(params.value);
+                    Tag.update({_id: params.value}, {$push: {pages: pageId}}, function (err, raw) {
                         if (err) return handleError(err);
                         console.log('The raw response from Mongo was ', raw);
                     });
                 } else {
-                    console.log('not exist');
-                    console.log(params[1]);
-                    params[1].save();
+                    console.log('not exist, the newTag is: ', params.value);
+                    params.value.save();
                 }
-            // }, function(existedTagId) {
-            //     console.log(existedTagId);
-            //     tagIds.push(existedTagId);
-            //     Tag.update({name: tag}, {$push: {pages: pageId}});
             }, console.log);
             findTagPromises.push(pse);
         }
     });
-
-    // createFindTagPromises.then(function(newTag) {
-    //     console.log(newTag);
-    //     newTag.save();
-    // }), function(err) {
-    //     console.log(err);
-    //     Tag.update({name: tag}, {$push: {pages: pageId}});
-    // });
-
-    console.log(findTagPromises);
 
     // convert markdown content to html
     function saveContent() {
