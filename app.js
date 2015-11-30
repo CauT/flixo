@@ -4,11 +4,8 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var Q = require('q');
 var Promise = require('bluebird')
 // promisify the entire mongoose Model
-// var Page = require('./models/page').Page;
-// var Tag = require('./models/tag').Tag;
 var Page = Promise.promisifyAll(require('./models/page').Page);
 var Tag = Promise.promisifyAll(require('./models/tag').Tag);
 
@@ -50,19 +47,21 @@ app.use('/', function(req, res, next) {
         next();
 });
 
-app.get('/tag/:tagName', function(req, res, next) {
+app.get('/tag/:tagId', function(req, res, next) {
     var pageInfos = [], promises = [];
+    var result;
 
-    var findTagPromise = Tag.findOne({name: req.params.tagName}, 'pages').exec(
-        function(err, result) {
+    var findTagPromise = Tag.findOne({_id: req.params.tagId}, 'pages').exec(
+        function(err, found) {
             if (err) return err;
-            return result;
+            result = found;    
         }
     );
 
     function getTagIdList(result) {
         result.pages.forEach(function(pageId) {
-            promises.push(Page.findOne({_id: new ObjectId(pageId)}, 'title').exec(function(err, page) {
+            promises.push(Page.findOne({_id: new ObjectId(pageId)}, 'title')
+            .exec(function(err, page) {
                 if (err) return err;
                 pageInfos.push({
                     _id: pageId,
@@ -79,7 +78,10 @@ app.get('/tag/:tagName', function(req, res, next) {
         });
     }
 
-    findTagPromise.then(getTagIdList, console.log).all(promises).then(renderRes, console.log);
+    findTagPromise
+    .then(getTagIdList, console.log)
+    .all(promises)
+    .then(renderRes, console.log);
 });
 
 app.get('/page/:pageId', function(req, res, next) {
@@ -87,7 +89,7 @@ app.get('/page/:pageId', function(req, res, next) {
         if (err) return err;
         var tagNames = new Array();
         page.tags.forEach(function(tag) {
-            tagNames.push(tag.name);
+            tagNames.push(tag);
         });
         res.render('page', {
             tagNames: tagNames,
