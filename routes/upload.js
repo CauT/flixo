@@ -39,40 +39,41 @@ router.post('/page', function(req, res, next) {
     // Be careful that if convert markdown is quicker than save tag, tags will be null
     const tempArr = req.body.tag.split('@');
     var tagArr = [];
+    var existed = {};
     tempArr.forEach(function(tagName) {
-        if (!(tagName.trim() === "")) {
-            tagArr.push(tagName);
+        // only take tags that's unique and non-emtpy
+        // FIXME: Case Sensetive or not?
+        const trimmedTagName = tagName.trim();
+        if (!(trimmedTagName === "") && !existed[trimmedTagName]) {
+            tagArr.push(trimmedTagName);
+            existed[trimmedTagName] = true;
         }
     }, this);
 
-    var hash = {};
 
     function saveTag() {
         tagArr.forEach(function(tag) {
-            if (!hash[tag]) {
-                hash[tag] = true;
-                newPage.tags.push(tagId);
-                Tag.findOne({'name': tag}, '_id', function(err, found) {
-                    if(found == undefined) {
-                        var newTag = Tag({
-                            _id: tagId,
-                            name: tag,
-                            created_at: date,
-                            updated_at: date,
-                            pages: [pageId]
-                        });
-                        newTag.save();
-                    } else {
-                        Tag.update({'_id': found._id}, {$push: {'pages': pageId}}, function(err){
-                            if (err) {
-                                console.log('Update error');
-                            } else {
-                                console.log('Update success');
-                            }
-                        });
-                    }
-                });
-            }
+            newPage.tags.push(tagId);
+            Tag.findOne({'name': tag}, '_id', function(err, found) {
+                if(found == undefined) {
+                    var newTag = Tag({
+                        _id: tagId,
+                        name: tag,
+                        created_at: date,
+                        updated_at: date,
+                        pages: [pageId]
+                    });
+                    newTag.save();
+                } else {
+                    Tag.update({'_id': found._id}, {$push: {'pages': pageId}}, function(err){
+                        if (err) {
+                            console.log('Update error');
+                        } else {
+                            console.log('Update success');
+                        }
+                    });
+                }
+            });
         });
     }
 
