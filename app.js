@@ -51,35 +51,29 @@ app.use('/', function(req, res, next) {
 });
 
 app.get('/tag/:tagName', function(req, res, next) {
-    var pageInfos = [], promises = [];
-
-    var findTagPromise = Tag.findOne({name: req.params.tagName}, 'pages').exec(
-        function(err, result) {
-            if (err) return err;
-            return result;
-        }
-    );
-
-    function getTagIdList(result) {
+    Tag.findOne({name: req.params.tagName}, 'pages').exec()
+    .then(function(result){
+        var pagePromises = [];
         result.pages.forEach(function(pageId) {
-            promises.push(Page.findOne({_id: new ObjectId(pageId)}, 'title').exec(function(err, page) {
-                if (err) return err;
-                pageInfos.push({
-                    _id: pageId,
-                    title: page.title
-                });
-            }));
+            pagePromises.push(Page.findOne({_id: pageId}, 'title').exec())
         });
-        return promises;
-    }
-
-    function renderRes() {
+        return pagePromises;
+    }).then(function(pagePromises){
+        return Promise.all(pagePromises);
+    }).then(function(values){
+        var pageInfos = [];
+        values.forEach(function(page){
+            pageInfos.push({
+                _id: page._id,
+                title: page.title
+            });
+        })
+        return pageInfos;
+    }).then(function(pageInfos){
         res.render('index', {
             pages: pageInfos
         });
-    }
-
-    findTagPromise.then(getTagIdList, console.log).all(promises).then(renderRes, console.log);
+    })
 });
 
 app.get('/page/:pageId', function(req, res, next) {
