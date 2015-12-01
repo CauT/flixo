@@ -9,14 +9,14 @@ var Page = require('../models/page').Page;
 var Tag = Promise.promisifyAll(require('../models/tag').Tag);
 
 marked.setOptions({
-  renderer: new marked.Renderer(),
-  gfm: true,
-  tables: true,
-  breaks: false,
-  pedantic: false,
-  sanitize: true,
-  smartLists: true,
-  smartypants: false
+    renderer: new marked.Renderer(),
+    gfm: true,
+    tables: true,
+    breaks: false,
+    pedantic: false,
+    sanitize: true,
+    smartLists: true,
+    smartypants: false
 });
 
 router.get('/page', function(req, res, next) {
