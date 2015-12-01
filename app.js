@@ -6,7 +6,7 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var Promise = require('bluebird')
+var Promise = require('bluebird');
 // promisify the entire mongoose Model
 var Page = Promise.promisifyAll(require('./models/page').Page);
 var Tag = Promise.promisifyAll(require('./models/tag').Tag);
@@ -32,21 +32,23 @@ app.set('view engine', 'jade');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', function(req, res, next) {
     if (req.url === '/') {
         Page.find({}, 'title _id').sort('-date').exec(function(err, pages) {
-            if (err) return err;
+            if (err) {
+                return err;
+            };
             res.render('index', {
                 pages: pages
             });
         });
-    }
-    else
+    } else {
         next();
+    }
 });
 
 app.get('/tag/:tagId', function(req, res, next) {
@@ -69,20 +71,19 @@ app.get('/tag/:tagId', function(req, res, next) {
                 _id: page._id,
                 title: page.title
             });
-        })
+        });
         return pageInfos;
     })
     .then(function(pageInfos){
         res.render('index', {
             pages: pageInfos
         });
-    })
+    });
 });
 
 app.get('/page/:pageId', function(req, res, next) {
     let content;
-    
-    Page.findOne({ _id: req.params.pageId }, 'title content tags').exec()
+    Page.findOne({_id: req.params.pageId}, 'title content tags').exec()
     .then(function(page) {
         let findTagNamePromises = [];
         content = page.content;

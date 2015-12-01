@@ -30,7 +30,6 @@ router.post('/page', function(req, res, next) {
     var pageId = mongoose.Types.ObjectId();
     var tagIds = [];
     var findTagPromises = [];
-    var newTag;
     var newPage = Page({
         _id: pageId,
         author: 'DesGemini',
