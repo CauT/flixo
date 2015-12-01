@@ -49,7 +49,7 @@ router.post('/page', function(req, res, next) {
             hash[tag] = true;
             pse = new Promise(function(resolve, reject) {
                 Tag.findOne({'name': tag}, 'pages').exec(function(err, found) {
-                    if(found == undefined) {
+                    if (found === undefined) {
                         var tmpTagId = mongoose.Types.ObjectId();
                         console.log(tmpTagId);
                         tagIds.push(tmpTagId);
@@ -77,7 +77,9 @@ router.post('/page', function(req, res, next) {
                     console.log('exist, the tag id: ', params.value);
                     tagIds.push(params.value);
                     Tag.update({_id: params.value}, {$push: {pages: pageId}}, function (err, raw) {
-                        if (err) return handleError(err);
+                        if (err) {
+                            return handleError(err);
+                        }
                         console.log('The raw response from Mongo was ', raw);
                     });
                 } else {
@@ -93,7 +95,9 @@ router.post('/page', function(req, res, next) {
     function saveContent() {
         console.log('save content');
         marked(req.body.page, function(err, content) {
-            if (err) throw err;
+            if (err) {
+                throw err;
+            }
             newPage.content = content;
         });
     }
@@ -104,7 +108,9 @@ router.post('/page', function(req, res, next) {
             newPage.tags.push(tagId);
         });
         newPage.save(function(err, saved) {
-            if (err) throw err;
+            if (err) {
+                throw err;
+            }
             res.redirect('/page/' + saved._id);
         });
     });
