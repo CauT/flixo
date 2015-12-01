@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var path = require('path');
 // var favicon = require('serve-favicon');
@@ -50,9 +52,9 @@ app.use('/', function(req, res, next) {
 app.get('/tag/:tagId', function(req, res, next) {
     Tag.findOne({_id: req.params.tagId}, 'pages').exec()
     .then(function(result){
-        var pagePromises = [];
+        let pagePromises = [];
         result.pages.forEach(function(pageId) {
-            const p = Page.findOne({_id: pageId}, 'title').exec();
+            let p = Page.findOne({_id: pageId}, 'title').exec();
             pagePromises.push(p);
         });
         return pagePromises;
@@ -61,7 +63,7 @@ app.get('/tag/:tagId', function(req, res, next) {
         return Promise.all(pagePromises);
     })
     .then(function(values){
-        var pageInfos = [];
+        let pageInfos = [];
         values.forEach(function(page){
             pageInfos.push({
                 _id: page._id,
@@ -78,14 +80,14 @@ app.get('/tag/:tagId', function(req, res, next) {
 });
 
 app.get('/page/:pageId', function(req, res, next) {
-    var content;
+    let content;
     
     Page.findOne({ _id: req.params.pageId }, 'title content tags').exec()
     .then(function(page) {
-        var findTagNamePromises = [];
+        let findTagNamePromises = [];
         content = page.content;
         page.tags.forEach(function(tagId) {
-            const p = Tag.findById(tagId, 'name').exec();
+            let p = Tag.findById(tagId, 'name').exec();
             findTagNamePromises.push(p);
         });
         return findTagNamePromises;
