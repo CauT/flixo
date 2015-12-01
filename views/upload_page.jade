@@ -2,15 +2,20 @@ extends layout
 
 block links
     link(rel='stylesheet', href='/stylesheets/upload.css')
+    link(rel="stylesheet" href="//cdn.jsdelivr.net/editor/0.1.0/editor.css")
+    script(src="//cdn.jsdelivr.net/editor/0.1.0/editor.js")
+    script(src="//cdn.jsdelivr.net/editor/0.1.0/marked.js")
     
 block content
     body
-        form(method="post" action="/upload/page"
-        autocomplete="off")    
-            p 请输入博文标题
-            input(type="text" name="title" class="page_input")
-            p 请输入博文内容
-            textarea(name="page" class="page_input")
-            p 请输入标签，以@开头，如"@Node.js"
-            input(type="text" name="tag" class="page_input")
-            input(type="submit")
+        div(class="editor-wrapper")
+            form(method="post" action="/upload/page"
+            autocomplete="off")    
+                input(type="text" name="title" class="title" placeholder="请输入博文标题")
+                input(type="text" name="tag" class="title" placeholder="请输入标签，以@开头，如'@Node.js'")
+                textarea(name="page" class="page_input")
+    
+                input(type="submit")
+            script(type="text/javascript").
+                var editor = new Editor();
+                editor.render();
