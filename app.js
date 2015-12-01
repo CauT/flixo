@@ -54,7 +54,7 @@ app.get('/tag/:tagId', function(req, res, next) {
     var findTagPromise = Tag.findOne({_id: req.params.tagId}, 'pages').exec(
         function(err, found) {
             if (err) return err;
-            result = found;    
+            result = found;
         }
     );
 
@@ -85,18 +85,30 @@ app.get('/tag/:tagId', function(req, res, next) {
 });
 
 app.get('/page/:pageId', function(req, res, next) {
-    Page.findOne({ _id: req.params.pageId }, 'title content tags', function(err, page) {
-        if (err) return err;
-        var tagNames = new Array();
-        page.tags.forEach(function(tag) {
-            tagNames.push(tag);
+    var findTagNamePromises = [];
+    var pse;
+    var content;
+
+    Page.findOne({ _id: req.params.pageId }, 'title content tags').exec()
+    .then(function(page) {
+        content = page.content;
+        page.tags.forEach(function(tagId) {
+            pse = Tag.findById(tagId, 'name').exec();
+            findTagNamePromises.push(pse);
         });
+        return findTagNamePromises;
+    }, console.log)
+    .then(function(findTagNamePromises) {
+        return Promise.all(findTagNamePromises);
+    })
+    .then(function(tags) {
+        console.log(tags);
         res.render('page', {
-            tagNames: tagNames,
+            tags: tags,
             css_path: '/stylesheets/greyshade.css',
-            marked_page: page.content
+            marked_page: content
         });
-    });
+    }, console.log);
 });
 
 app.use('/upload', upload);

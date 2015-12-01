@@ -10,9 +10,9 @@ block links
 block content
     body
         ul(class="tag")
-            each tagName in tagNames
+            each tag in tags
                 li
-                    a(href="/tag/" + tagName) !{tagName}
+                    a(href="/tag/" + tag._id) !{tag.name}
                 
         !{marked_page}
     
