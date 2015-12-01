@@ -48,53 +48,45 @@ app.use('/', function(req, res, next) {
 });
 
 app.get('/tag/:tagId', function(req, res, next) {
-    var pageInfos = [], promises = [];
-    var result;
-
-    var findTagPromise = Tag.findOne({_id: req.params.tagId}, 'pages').exec(
-        function(err, found) {
-            if (err) return err;
-            result = found;
-        }
-    );
-
-    function getTagIdList(result) {
+    Tag.findOne({_id: req.params.tagId}, 'pages').exec()
+    .then(function(result){
+        var pagePromises = [];
         result.pages.forEach(function(pageId) {
-            promises.push(Page.findOne({_id: new ObjectId(pageId)}, 'title')
-            .exec(function(err, page) {
-                if (err) return err;
-                pageInfos.push({
-                    _id: pageId,
-                    title: page.title
-                });
-            }));
+            const p = Page.findOne({_id: pageId}, 'title').exec();
+            pagePromises.push(p);
         });
-        return promises;
-    }
-
-    function renderRes() {
+        return pagePromises;
+    })
+    .then(function(pagePromises){
+        return Promise.all(pagePromises);
+    })
+    .then(function(values){
+        var pageInfos = [];
+        values.forEach(function(page){
+            pageInfos.push({
+                _id: page._id,
+                title: page.title
+            });
+        })
+        return pageInfos;
+    })
+    .then(function(pageInfos){
         res.render('index', {
             pages: pageInfos
         });
-    }
-
-    findTagPromise
-    .then(getTagIdList, console.log)
-    .all(promises)
-    .then(renderRes, console.log);
+    })
 });
 
 app.get('/page/:pageId', function(req, res, next) {
-    var findTagNamePromises = [];
-    var pse;
     var content;
-
+    
     Page.findOne({ _id: req.params.pageId }, 'title content tags').exec()
     .then(function(page) {
+        var findTagNamePromises = [];
         content = page.content;
         page.tags.forEach(function(tagId) {
-            pse = Tag.findById(tagId, 'name').exec();
-            findTagNamePromises.push(pse);
+            const p = Tag.findById(tagId, 'name').exec();
+            findTagNamePromises.push(p);
         });
         return findTagNamePromises;
     }, console.log)
