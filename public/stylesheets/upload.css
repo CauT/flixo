@@ -1,7 +1,12 @@
-.page_input {
-  width:300px; /* 这里是输入框的长度 */
-  height:100px; /* 这里是输入框的宽度 */
-  position:relative; /* 这里规定输入框的定位类型 */
-  top:0px; /* 这里规定输入框于原位置向下偏移100px */
-  left:0px; /* 这里规定输入框于原位置向右偏移300px */
+.editor-wrapper {
+    max-width: 880px;
+    padding: 10px;
+    margin: 60px auto;
+}
+
+
+#title{
+	margin-left: 100px;
+	margin-top: 100px;
+	color: #006633;
 }
