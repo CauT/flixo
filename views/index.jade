@@ -15,14 +15,14 @@ block content
                     h3 编码沉思录
                 div(class="mdl-layout--large-screen-only mdl-layout__header-row")
                 div(class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark")
-                    a(href="#" class="mdl-layout__tab is-active") Index
-                    a(href="#" class="mdl-layout__tab") Tag
-                    a(href="#" class="mdl-layout__tab") About
+                    a(href="#index" class="mdl-layout__tab is-active") Index
+                    a(href="#tag" class="mdl-layout__tab") Tag
+                    a(href="#about" class="mdl-layout__tab") About
                     button(class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--accent" id="add")
                         i(class="material-icons" role="presentation") add
                         span(class="visuallyhidden") Add
             main(class="mdl-layout__content")
-                div(class="mdl-layout__tab-panel is-active" id="overview") 
+                div(class="mdl-layout__tab-panel is-active" id="index") 
                     each page in pages
                         section(class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp")
                             div(class="mdl-card mdl-cell mdl-cell--12-col")
@@ -31,3 +31,17 @@ block content
                                     Dolore ex deserunt aute fugiat aute nulla ea sunt aliqua nisi cupidatat eu. Nostrud in laboris labore nisi amet do dolor eu fugiat consectetur elit cillum esse. Pariatur occaecat nisi laboris tempor laboris eiusmod qui id Lorem esse commodo in. Exercitation aute dolore deserunt culpa consequat elit labore incididunt elit anim.
                                  div(class="mdl-card__actions")
                                     a(href="/page/" + page._id class="mdl-button") Read More
+                div(class="mdl-layout__tab-panel is-active" id="tag") 
+                    section(class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp")
+                        div(class="mdl-card mdl-cell mdl-cell--12-col")
+                            div(class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing")
+                                each tag in tags
+                                    div(class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone")
+                                        div(class="section__circle-container__circle mdl-color--primary")
+                                    div(class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone")
+                                        a(href="/tag/" + tag._id) !{tag.name}
+                div(class="mdl-layout__tab-panel is-active" id="about") 
+                    section(class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp")
+                        div(class="mdl-card mdl-cell mdl-cell--12-col")
+                            div(class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing")
+                                div(class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone") 这是一个很牛X的博客
