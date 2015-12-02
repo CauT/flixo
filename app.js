@@ -38,14 +38,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', function(req, res, next) {
     if (req.url === '/') {
-        Page.find({}, 'title _id').sort('-date').exec(function(err, pages) {
-            if (err) {
-                return err;
-            };
-            res.render('index', {
-                pages: pages
-            });
-        });
+        var queryAllPage = Page.find({}, 'title _id').sort('-date');
+        var queryAllTag = Tag.find({}, 'name _id').sort('-pageNum');
+
+        Promise
+        .all([queryAllTag.exec(), queryAllPage.exec()])
+        .spread(
+            function(tags, pages) {
+                res.render('index', {
+                    tags: tags,
+                    pages: pages
+                });
+            }
+        );
     } else {
         next();
     }

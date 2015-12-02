@@ -33,13 +33,12 @@ router.post('/page', function(req, res, next) {
     var newPage = Page({
         _id: pageId,
         author: 'DesGemini',
-        created_at: date,
-        updated_at: date
+        createdAt: date,
+        updatedAt: date
     });
     newPage.title = req.body.title;
 
     // check uniqueness of tags, if true, put it into database
-    // Be careful that if convert markdown is quicker than save tag, tags will be null
     var tagArr = req.body.tag.split('@');
 
     var hash = {};
@@ -49,15 +48,16 @@ router.post('/page', function(req, res, next) {
             hash[tag] = true;
             pse = new Promise(function(resolve, reject) {
                 Tag.findOne({'name': tag}, 'pages').exec(function(err, found) {
-                    if (found === undefined) {
+                    if (found === null) {
                         var tmpTagId = mongoose.Types.ObjectId();
                         console.log(tmpTagId);
                         tagIds.push(tmpTagId);
                         var newTag = Tag({
                             _id: tmpTagId,
                             name: tag,
-                            created_at: date,
-                            updated_at: date,
+                            pageNum: 1,
+                            createdAt: date,
+                            updatedAt: date,
                             pages: [pageId]
                         });
                         resolve({
@@ -76,12 +76,18 @@ router.post('/page', function(req, res, next) {
                 if (params.existOrNot) {
                     console.log('exist, the tag id: ', params.value);
                     tagIds.push(params.value);
-                    Tag.update({_id: params.value}, {$push: {pages: pageId}}, function (err, raw) {
-                        if (err) {
-                            return handleError(err);
+                    Tag.update({
+                        _id: params.value
+                        }, {
+                            $push: {pages: pageId},
+                            $inc: {pageNum: 1}
+                        }, function (err, raw) {
+                            if (err) {
+                                return handleError(err);
+                            }
+                            console.log('The raw response from Mongo was ',raw);
                         }
-                        console.log('The raw response from Mongo was ', raw);
-                    });
+                    );
                 } else {
                     console.log('not exist, the newTag is: ', params.value);
                     params.value.save();

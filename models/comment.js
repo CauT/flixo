@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 var commentSchema = new Schema({
     author: String,
     content: String,
-    created_at: Date
+    createdAt: Date
     // comment can not be edited
 });
 

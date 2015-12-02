@@ -6,9 +6,10 @@ var ObjectId = Schema.ObjectId;
 
 var tagSchema = new Schema({
     name: String,
+    pageNum: Number,
     pages: [ObjectId],
-    created_at: Date,
-    updated_at: Date
+    createdAt: Date,
+    updatedAt: Date
 });
 
 module.exports = {

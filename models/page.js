@@ -13,8 +13,8 @@ var pageSchema = new Schema({
     content: String,
     comments: [commentSchema],
     tags: [ObjectId],
-    created_at: Date,
-    updated_at: Date
+    createdAt: Date,
+    updatedAt: Date
 });
 
 module.exports = {
