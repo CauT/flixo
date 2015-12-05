@@ -15,6 +15,7 @@ block content
                 a(class="nav" href="/tag") Tag
                 a(class="nav" href="/about") About
             div(class="content")
+                h1 !{title}
                 each tag in tags
                     li
                         a(href="/tag/" + tag._id) !{tag.name}

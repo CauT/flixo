@@ -88,10 +88,12 @@ app.get('/tag/:tagId', function(req, res, next) {
 
 app.get('/page/:pageId', function(req, res, next) {
     let content;
+    let title;
     Page.findOne({_id: req.params.pageId}, 'title content tags').exec()
     .then(function(page) {
         let findTagNamePromises = [];
         content = page.content;
+        title = page.title;
         page.tags.forEach(function(tagId) {
             let p = Tag.findById(tagId, 'name').exec();
             findTagNamePromises.push(p);
@@ -106,6 +108,7 @@ app.get('/page/:pageId', function(req, res, next) {
         res.render('page', {
             tags: tags,
             css_path: '/stylesheets/greyshade.css',
+            title: title,
             marked_page: content
         });
     }, console.log);
