@@ -1,18 +1,23 @@
 extends layout
 
 block links
-    link(rel="stylesheet", href="/stylesheets/GitHub2.css")
-    link(rel="stylesheet", href="/stylesheets/default.min.css")
-    link(rel="stylesheet", href="/stylesheets/style.css")
+    link(rel="stylesheet", href="/stylesheets/hljs/github.css")
+    link(rel="stylesheet", href="/stylesheets/post.css")
     script(src="/javascripts/highlight.min.js")
     script hljs.initHighlightingOnLoad()
         
 block content
     body
-        ul(class="tag")
-            each tag in tags
-                li
-                    a(href="/tag/" + tag._id) !{tag.name}
-                
-        !{marked_page}
+        div(class="wrapper")
+            div(class="header")
+                span(class="blog-name") 编码沉思录
+                a(class="nav" href="/") Home
+                a(class="nav" href="/tag") Tag
+                a(class="nav" href="/about") About
+            div(class="content")
+                each tag in tags
+                    li
+                        a(href="/tag/" + tag._id) !{tag.name}
+
+                !{marked_page}
     

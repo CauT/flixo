@@ -1,0 +1,165 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 微软雅黑, Hiragino Sans GB, serif;
+}
+
+p {
+    line-height:1.6em;
+}
+
+.wrapper {
+    margin: 2em auto;
+	width: 70em;
+    padding-top: 25px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+    min-width: 700px !important;
+}
+
+a.nav:visited {
+	color: #000;
+}
+
+.content a {
+	color: #4183C4;
+	text-decoration:none;
+}
+
+.content a:visited {
+	color: #4183C4;
+}
+
+.content a:hover {
+	color: #4183C4;
+	text-decoration: underline;
+}
+
+.blog-name {
+    font-size: 1.3em;
+}
+
+.nav:link {
+    margin-left: 5%;
+    font-size: 1.2em;
+    color: #000;
+}
+
+.content {
+    margin-top: 5%;
+}
+
+.title:link {
+    font-size: 1.3em;
+    color: #000;
+}
+
+pre {
+	line-height: 19px;
+	word-break: break-all;
+	font-size: 13px;
+	overflow: auto;
+	border-radius: 3px;
+}
+
+pre code {
+    white-space: pre;
+    display: block;
+    padding: 0.5em;
+}
+
+code, tt {
+  margin: 0 2px;
+  padding: 0 5px;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+  font-size:13px;
+  white-space: nowrap;
+  font-family: Menlo, Droid Sans Mono, Consolas, Monospace;
+  text-shadow: none;
+}
+
+blockquote {
+	border-left: 4px solid #DDD;
+	padding: 0 15px;
+	color: #777;
+}
+
+.footer {
+	margin: 2em auto;
+	width: 35em;
+    border-color: #DDD;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 3px;
+    font-size: 1em;
+    text-align: center;
+    min-width: 700px !important;
+}
+
+.footer a {
+	color: #4183C4;
+	text-decoration:none;
+}
+
+.footer a:visited {
+	color: #4183C4;
+}
+
+.footer a:hover {
+	color: #4183C4;
+	text-decoration: underline;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+table{
+	padding:0
+}
+
+table{
+	border-collapse:collapse;
+	border-spacing:0
+}
+
+table tr{
+	border-top:1px solid #ccc;
+	background-color:#fff;
+	margin:0;
+	padding:0
+}
+
+table tr:nth-child(2n){
+	background-color:#f8f8f8
+}
+
+table tr th{
+	font-weight:bold;
+	border:1px solid #ccc;
+	text-align:left;
+	margin:0;
+	padding:6px 13px
+}
+
+table tr td{
+	border:1px solid #ccc;
+	text-align:left;
+	margin:0;
+	padding:6px 13px
+}
+
+table tr th :first-child,.body-html table tr td :first-child{
+	margin-top:0
+}
+
+table tr th :last-child,.body-html table tr td :last-child{
+	margin-bottom:0
+}

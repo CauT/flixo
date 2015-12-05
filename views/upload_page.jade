@@ -8,14 +8,21 @@ block links
     
 block content
     body
-        div(class="editor-wrapper")
-            form(method="post" action="/upload/page"
-            autocomplete="off")    
-                input(type="text" name="title" class="title" placeholder="请输入博文标题")
-                input(type="text" name="tag" class="title" placeholder="请输入标签，以@开头，如'@Node.js'")
-                textarea(name="page" class="page_input")
-    
-                input(type="submit")
-            script(type="text/javascript").
-                var editor = new Editor();
-                editor.render();
+        div(class="wrapper")
+            div(class="header")
+                span(class="blog-name") 编码沉思录
+                a(class="nav" href="/") Home
+                a(class="nav" href="/tag") Tag
+                a(class="nav" href="/about") About
+            div(class="content")
+                div(class="editor-wrapper")
+                    form(method="post" action="/upload/page"
+                    autocomplete="off")    
+                        input(type="text" name="title" class="title" placeholder="请输入博文标题")
+                        input(type="text" name="tag" class="title" placeholder="请输入标签，以@开头，如'@Node.js'")
+                        textarea(name="page" class="page_input")
+            
+                        input(type="submit")
+                    script(type="text/javascript").
+                        var editor = new Editor();
+                        editor.render();
