@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', function(req, res, next) {
     if (req.url === '/') {
-        var queryAllPage = Page.find({}, 'title _id').sort('-date');
+        var queryAllPage = Page.find({}, 'title _id createdAt').sort('-date');
         var queryAllTag = Tag.find({}, 'name _id').sort('-pageNum');
 
         Promise
